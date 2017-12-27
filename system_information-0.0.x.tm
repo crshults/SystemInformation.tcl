@@ -1,4 +1,4 @@
-package provide system_information 0.0.1
+package provide system_information 0.0.2
 
 package require udp
 
@@ -7,7 +7,22 @@ namespace eval system_information {
 
 	set udp_socket [udp_open 15351 reuse]
 	
-	chan configure $udp_socket -blocking 0 -buffering none -mcastadd {224.0.0.251} -mcastloop 1 -remote {224.0.0.251 15351}
+	if {
+            [catch {
+                chan configure $udp_socket        \
+                    -blocking  0             \
+                    -buffering none          \
+                    -mcastadd  {224.0.0.251} \
+                    -mcastloop 1             \
+                    -remote    {224.0.0.251 15351}
+            }]
+        } {
+            chan configure $udp_socket \
+                -blocking  0      \
+                -buffering none   \
+                -broadcast 1      \
+                -remote    {127.255.255.255 15351}
+        }
 	
 	proc read_data {} {
 		set udp_socket [subst $[namespace current]::udp_socket]
