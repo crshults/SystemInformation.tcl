@@ -1,3 +1,5 @@
+package provide system_information 0.0.1
+
 package require udp
 
 namespace eval system_information {
